@@ -1,19 +1,29 @@
-from question_model import Question
-from data import question_data
+import data
+from data import TriviaData
 from quiz_brain import QuizBrain
+from ui import QuizInterface
 
-question_bank = []
-for question in question_data:
-    question_text = question["question"]
-    question_answer = question["correct_answer"]
-    new_question = Question(question_text, question_answer)
-    question_bank.append(new_question)
-
-
+# default trivia parameters
+initial_params = {
+            "amount": 10,
+            # category 9 is `any category`
+            "category": 9,
+            "difficulty": "easy",
+            "type": "boolean"
+        }
+# fetches the initial trivia questions from open trivia api
+trivia = TriviaData(initial_params)
+# returns a list of shuffled `Question` objects, each object has question/answer
+question_bank = trivia.generate_questions()
+# performs answer checking, retrieving new questions, tracking number of questions
 quiz = QuizBrain(question_bank)
+# pass the brain to the quiz interface so gui elements can access it
+quiz_ui = QuizInterface(quiz, data.PARAMS)
 
-while quiz.still_has_questions():
-    quiz.next_question()
 
-print("You've completed the quiz")
-print(f"Your final score was: {quiz.score}/{quiz.question_number}")
+
+
+
+
+
+
